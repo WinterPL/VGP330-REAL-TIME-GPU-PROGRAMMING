@@ -21,3 +21,4 @@
 #include "RenderObject.h"
 #include "Transform.h"
 #include "StandardEffect.h"
+#include "TextureManager.h"

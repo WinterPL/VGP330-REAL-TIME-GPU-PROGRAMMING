@@ -1,7 +1,7 @@
 #pragma once
 #include "MeshBuffer.h"
 #include "Transform.h"
-#include "Texture.h"
+#include "TextureManager.h"
 
 namespace WNTRengine::Graphics {
 	class RenderObject 
@@ -9,10 +9,10 @@ namespace WNTRengine::Graphics {
 	public:
 		void Terminate() 
 		{
-
+			meshBuffer.Terminate();
 		}
 		Transform transform;
 		MeshBuffer meshBuffer;
-		Texture diffuseTexture;
+		TextureId diffuseMapId;
 	};
 }

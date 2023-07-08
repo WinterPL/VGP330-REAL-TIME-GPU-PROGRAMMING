@@ -45,6 +45,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shader", "Shader", "{8ED6EE
 		Assets\Shaders\DoSomething.fx = Assets\Shaders\DoSomething.fx
 		Assets\Shaders\DoTexturing.fx = Assets\Shaders\DoTexturing.fx
 		Assets\Shaders\DoTransform.fx = Assets\Shaders\DoTransform.fx
+		Assets\Shaders\Standard.fx = Assets\Shaders\Standard.fx
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Texture", "Texture", "{502BAE57-92C2-4288-B9FF-5FA9BA2F9BF8}"

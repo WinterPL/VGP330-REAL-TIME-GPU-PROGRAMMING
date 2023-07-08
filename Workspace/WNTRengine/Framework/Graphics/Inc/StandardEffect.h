@@ -5,7 +5,7 @@
 #include "Sampler.h"
 #include "VertexShader.h"
 
-namespace WNTRengine::Graphics
+namespace WNTRengine::Graphics 
 {
 	class Camera;
 	class RenderObject;

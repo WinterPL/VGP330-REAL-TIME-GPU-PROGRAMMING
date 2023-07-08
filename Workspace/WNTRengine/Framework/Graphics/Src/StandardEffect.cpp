@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "RenderObject.h"
 #include "VertexTypes.h"
+#include "TextureManager.h"
 
 using namespace WNTRengine;
 using namespace WNTRengine::WNTRmath;
@@ -49,6 +50,9 @@ void StandardEffect::Render(const RenderObject& renderObject)
 
 	Matrix4 matFinal = Transpose(matWorld * matView * matProj);
 	mTransformBuffer.Update(&matFinal);
+
+	auto tm = TextureManager::Get();
+	tm->BindPS(renderObject.diffuseMapId, 0);
 
 	renderObject.meshBuffer.Render();
 }
