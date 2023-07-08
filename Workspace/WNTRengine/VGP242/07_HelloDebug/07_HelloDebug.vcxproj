@@ -144,11 +144,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GameState.h" />
-    <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="RenderObjects.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameState.cpp" />
-    <ClCompile Include="RenderObject.cpp" />
+    <ClCompile Include="RenderObjects.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>

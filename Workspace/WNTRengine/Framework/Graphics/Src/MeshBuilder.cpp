@@ -85,17 +85,17 @@ namespace
 		{
 			for (int c = 0; c < numColumns; ++c)
 			{
-				int i = (r * numColumns) + c;
+				int i = (r * numColumns + 1) + c;
 
 				//triangle 1
 				indices.push_back(i);
-				indices.push_back(i + numColumns + 1);
+				indices.push_back(i + numColumns + 2);
 				indices.push_back(i + 1);
 
 				//triangle 2
 				indices.push_back(i);
-				indices.push_back(i + numColumns);
 				indices.push_back(i + numColumns + 1);
+				indices.push_back(i + numColumns + 2);
 			}
 		}
 	}
@@ -320,9 +320,38 @@ MeshPX MeshBuilder::CreateSpherePX(int slices, int rings, float radius)
 	CreatePlaneIndices(mesh.indices, rings, slices);
 	return mesh;
 }
-MeshP MeshBuilder::CreateSphere(int slices, int rings, float radius)
+Mesh MeshBuilder::CreateSphere(int slices, int rings, float radius)
 {
-	MeshP mesh;
+	Mesh mesh;
+
+	float vertRotation = (WNTRmath::Constants::Pi / static_cast<float>(rings - 1));
+	float horzRotation = (WNTRmath::Constants::TwoPi / static_cast<float>(slices));
+	float uStep = 1.0f / static_cast<float>(slices);
+	float vStep = 1.0f / static_cast<float>(rings);
+	for (int r = 0; r <= rings; r++)
+	{
+		float ring = static_cast<float>(r);
+		float phi = ring * vertRotation;
+		for (int s = 0; s <= slices; s++)
+		{
+			float slice = static_cast<float>(s);
+			float rotation = slice * horzRotation;
+
+			float u = 1.0f - (uStep * slice);
+			float v = vStep * ring;
+
+			float x = radius * sin(rotation) * sin(phi);
+			float y = radius * cos(phi);
+			float z = radius * cos(rotation) * sin(phi);
+			const WNTRmath::Vector3 pos = { x,y,z };
+			const WNTRmath::Vector3 norm = WNTRmath::Normalize(pos);
+			const WNTRmath::Vector3 tan = WNTRmath::Normalize({ -z,0.0f,x });
+
+			mesh.vertices.push_back({ pos,norm,tan,{u,v} });
+		}
+
+	}
+	CreatePlaneIndices(mesh.indices, rings, slices);
 	return mesh;
 }
 

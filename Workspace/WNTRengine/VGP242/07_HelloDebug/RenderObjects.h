@@ -5,7 +5,7 @@ using namespace WNTRengine;
 using namespace WNTRengine::WNTRmath;
 using namespace WNTRengine::Graphics;
 
-class RenderObject
+class RenderObjects
 {
 public:
 	virtual void Initialize() {}
@@ -24,7 +24,7 @@ protected:
 
 };
 
-class SkySphere :public RenderObject
+class SkySphere :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -34,7 +34,7 @@ public:
 };
 
 
-class Sun :public RenderObject
+class Sun :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -44,7 +44,7 @@ public:
 };
 
 
-class Mercury :public RenderObject
+class Mercury :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -53,7 +53,7 @@ public:
 	void Update(float deltaTime, float speed, float RotSpeed) override;
 };
 
-class Venus :public RenderObject
+class Venus :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -62,7 +62,7 @@ public:
 	void Update(float deltaTime, float speed, float RotSpeed) override;
 };
 
-class Earth :public RenderObject
+class Earth :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -71,7 +71,7 @@ public:
 	void Update(float deltaTime, float speed, float RotSpeed) override;
 };
 
-class Mars :public RenderObject
+class Mars :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -80,7 +80,7 @@ public:
 	void Update(float deltaTime, float speed, float RotSpeed) override;
 };
 
-class Jupiter :public RenderObject
+class Jupiter :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -89,7 +89,7 @@ public:
 	void Update(float deltaTime, float speed, float RotSpeed) override;
 };
 
-class Saturn :public RenderObject
+class Saturn :public RenderObjects
 {
 public:
 	void Initialize();
@@ -98,7 +98,7 @@ public:
 	void Update(float deltaTime, float speed, float RotSpeed);
 };
 
-class Uranus :public RenderObject
+class Uranus :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -107,7 +107,7 @@ public:
 	void Update(float deltaTime, float speed, float RotSpeed) override;
 };
 
-class Neptune :public RenderObject
+class Neptune :public RenderObjects
 {
 public:
 	void Initialize()override;
@@ -116,7 +116,7 @@ public:
 	void Update(float deltaTime, float speed, float RotSpeed) override;
 };
 
-class Pluto :public RenderObject
+class Pluto :public RenderObjects
 {
 public:
 	void Initialize()override;

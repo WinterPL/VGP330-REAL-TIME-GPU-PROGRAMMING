@@ -48,7 +48,7 @@ void MeshBuffer::Update(const void* vertices, uint32_t vertexCount) {
     context->Unmap(mVertexBuffer, 0);
 }
 
-void MeshBuffer::Render() {
+void MeshBuffer::Render() const{
     auto context = GraphicsSystem::Get()->GetContext();
 
 

@@ -66,6 +66,18 @@
     <ClInclude Include="Inc\RenderTarget.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="Inc\Transform.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\RenderObject.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\StandardEffect.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\StandardEffect.cpp">
+      <Filter>Src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Precompiled.cpp">

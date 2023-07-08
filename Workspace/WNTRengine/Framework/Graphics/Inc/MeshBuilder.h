@@ -15,7 +15,7 @@ namespace WNTRengine::Graphics
 		//sphere
 		static MeshPC CreateSpherePC(int slices, int rings, float radius);
 		static MeshPX CreateSpherePX(int slices, int rings, float radius);
-		static MeshP CreateSphere(int slices, int rings, float radius);
+		static Mesh CreateSphere(int slices, int rings, float radius);
 		//Rect
 		static MeshPC CreateRectPC(float width, float height, float depth);
 		static MeshPX CreateRectPX(float width, float height, float depth);

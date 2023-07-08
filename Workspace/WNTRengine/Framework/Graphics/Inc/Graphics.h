@@ -18,3 +18,6 @@
 #include "BlendState.h"
 #include "DebugUI.h"
 #include "RenderTarget.h"
+#include "RenderObject.h"
+#include "Transform.h"
+#include "StandardEffect.h"
