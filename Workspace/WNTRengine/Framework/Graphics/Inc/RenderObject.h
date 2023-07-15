@@ -2,6 +2,7 @@
 #include "MeshBuffer.h"
 #include "Transform.h"
 #include "TextureManager.h"
+#include "Material.h"
 
 namespace WNTRengine::Graphics {
 	class RenderObject 
@@ -12,7 +13,11 @@ namespace WNTRengine::Graphics {
 			meshBuffer.Terminate();
 		}
 		Transform transform;
-		MeshBuffer meshBuffer;
+		Material material;
+		
 		TextureId diffuseMapId;
+		TextureId normalMapId;
+
+		MeshBuffer meshBuffer;
 	};
 }

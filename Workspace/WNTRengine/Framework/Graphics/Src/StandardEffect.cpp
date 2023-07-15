@@ -11,7 +11,10 @@ using namespace WNTRengine::Graphics;
 
 void StandardEffect::Initialize(const std::filesystem::path& filepath)
 {
-	mTransformBuffer.Initialize(sizeof(Matrix4));
+	mTransformBuffer.Initialize();
+	mLightingBuffer.Initialize();
+	mMaterialBuffer.Initialize();
+	mSettingBuffer.Initialize();
 	mVertexShader.Initialize<Vertex>(filepath);
 	mPixelShader.Initialize(filepath);
 	mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
@@ -21,6 +24,7 @@ void StandardEffect::Terminate()
 {
 	mSampler.Terminate();
 	mPixelShader.Terminate();
+	mMaterialBuffer.Terminate();
 	mVertexShader.Terminate();
 	mTransformBuffer.Terminate();
 }
@@ -32,6 +36,13 @@ void StandardEffect::Begin()
 	mPixelShader.Bind();
 
 	mTransformBuffer.BindVS(0);
+
+	mLightingBuffer.BindVS(1);
+	mLightingBuffer.BindPS(1);
+
+	mMaterialBuffer.BindPS(2);
+
+	mSettingBuffer.BindPS(3);
 
 	mSampler.BindVS(0);
 	mSampler.BindPS(0);
@@ -48,11 +59,26 @@ void StandardEffect::Render(const RenderObject& renderObject)
 	const auto& matView = mCamera->GetViewMatrix();
 	const auto& matProj = mCamera->GetProjectionMatrix();
 
-	Matrix4 matFinal = Transpose(matWorld * matView * matProj);
-	mTransformBuffer.Update(&matFinal);
+	
+	TransformData transformData;
+	transformData.world = Transpose(matWorld);
+	transformData.wvp = Transpose(matWorld * matView * matProj);
+	transformData.viewPosition = mCamera->GetPosition();
+	mTransformBuffer.Update(transformData);
+
+	mLightingBuffer.Update(*mDirectionalLight);
+
+	mMaterialBuffer.Update(renderObject.material);
+
+
+	SettingData settingData;
+	settingData.useDiffuseMap = mSettingData.useDiffuseMap > 0 && renderObject.diffuseMapId != 0;
+	settingData.useNormalMap = mSettingData.useNormalMap > 0 && renderObject.normalMapId != 0;
+	mSettingBuffer.Update(mSettingData);
 
 	auto tm = TextureManager::Get();
 	tm->BindPS(renderObject.diffuseMapId, 0);
+	tm->BindPS(renderObject.normalMapId, 1);
 
 	renderObject.meshBuffer.Render();
 }
@@ -62,10 +88,24 @@ void StandardEffect::SetCamera(const Camera& camera)
 	mCamera = &camera;
 }
 
+void StandardEffect::SetDirectionalLight(const DirectionalLight& directionalLight)
+{
+	mDirectionalLight = &directionalLight;
+}
+
 void StandardEffect::DebugUI()
 {
-	if (ImGui::CollapsingHeader("Standard##Effect", ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::CollapsingHeader("StandardEffect##", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-
+		bool useDiffuseMap = mSettingData.useDiffuseMap > 0;
+		if (ImGui::Checkbox("UseDiffuseMap##", &useDiffuseMap))
+		{
+			mSettingData.useDiffuseMap = (useDiffuseMap) ? 1 : 0;
+		}
+		bool useNormalMap = mSettingData.useNormalMap > 0;
+		if (ImGui::Checkbox("UseNormalMap##", &useNormalMap))
+		{
+			mSettingData.useNormalMap = (useNormalMap) ? 1 : 0;
+		}
 	}
 }

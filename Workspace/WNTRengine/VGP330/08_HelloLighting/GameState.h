@@ -18,6 +18,7 @@ public:
 protected:
 
 	Camera mCamera;
+	DirectionalLight mDirectionalLight;
 	StandardEffect mStandardEffect;
 	RenderObject mRenderObject;
 };
