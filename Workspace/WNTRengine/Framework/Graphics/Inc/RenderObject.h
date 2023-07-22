@@ -17,6 +17,8 @@ namespace WNTRengine::Graphics {
 		
 		TextureId diffuseMapId;
 		TextureId normalMapId;
+		TextureId bumpMapId;
+		TextureId specMapId;
 
 		MeshBuffer meshBuffer;
 	};

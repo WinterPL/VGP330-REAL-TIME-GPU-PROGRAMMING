@@ -42,6 +42,7 @@ void StandardEffect::Begin()
 
 	mMaterialBuffer.BindPS(2);
 
+	mSettingBuffer.BindVS(3);
 	mSettingBuffer.BindPS(3);
 
 	mSampler.BindVS(0);
@@ -74,11 +75,18 @@ void StandardEffect::Render(const RenderObject& renderObject)
 	SettingData settingData;
 	settingData.useDiffuseMap = mSettingData.useDiffuseMap > 0 && renderObject.diffuseMapId != 0;
 	settingData.useNormalMap = mSettingData.useNormalMap > 0 && renderObject.normalMapId != 0;
+	settingData.useDiffuseMap = mSettingData.useDiffuseMap > 0 && renderObject.diffuseMapId != 0;
+	settingData.useBumpMap = mSettingData.useBumpMap > 0 && renderObject.bumpMapId != 0;
+	settingData.useSpecMap = mSettingData.useSpecMap > 0 && renderObject.specMapId != 0;
+	settingData.useCelShading = mSettingData.useCelShading;
+	settingData.bumpWeight = mSettingData.bumpWeight;
 	mSettingBuffer.Update(mSettingData);
 
 	auto tm = TextureManager::Get();
 	tm->BindPS(renderObject.diffuseMapId, 0);
 	tm->BindPS(renderObject.normalMapId, 1);
+	tm->BindVS(renderObject.bumpMapId, 2);
+	tm->BindPS(renderObject.specMapId, 3);
 
 	renderObject.meshBuffer.Render();
 }
@@ -107,5 +115,21 @@ void StandardEffect::DebugUI()
 		{
 			mSettingData.useNormalMap = (useNormalMap) ? 1 : 0;
 		}
+		bool useBumpMap = mSettingData.useBumpMap > 0;
+		if (ImGui::Checkbox("UseBumpMap##", &useBumpMap))
+		{
+			mSettingData.useBumpMap = (useBumpMap) ? 1 : 0;
+		}
+		bool useSpecMap = mSettingData.useSpecMap > 0;
+		if (ImGui::Checkbox("UseSpecMap##", &useSpecMap))
+		{
+			mSettingData.useSpecMap = (useSpecMap) ? 1 : 0;
+		}
+		bool useCelShading = mSettingData.useCelShading > 0;
+		if (ImGui::Checkbox("UseCelShading##", &useCelShading))
+		{
+			mSettingData.useCelShading = (useCelShading) ? 1 : 0;
+		}
+		ImGui::DragFloat("BumpWeight##", &mSettingData.bumpWeight, 0.1f, 0.0f, 2.0f);
 	}
 }

@@ -21,6 +21,7 @@ protected:
 	DirectionalLight mDirectionalLight;
 	StandardEffect mStandardEffect;
 	RenderObject mRenderObject;
+	RenderTarget mRenderTarget;
 };
 
 

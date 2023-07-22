@@ -19,14 +19,21 @@ void GameState::Initialize()
     mStandardEffect.SetCamera(mCamera);
     mStandardEffect.SetDirectionalLight(mDirectionalLight);
 
-    Mesh earth = MeshBuilder::CreateSphere(30, 30, 1.0f);
+    auto tm = TextureManager::Get();
+    Mesh earth = MeshBuilder::CreateSphere(60, 60, 1.0f);
     mRenderObject.meshBuffer.Initialize(earth);
-    mRenderObject.diffuseMapId = TextureManager::Get()->LoadTexture("planets/earth/earth.jpg");
-    mRenderObject.normalMapId = TextureManager::Get()->LoadTexture("planets/earth/earth_normal.jpg");
+    mRenderObject.diffuseMapId = tm->LoadTexture("planets/earth/earth.jpg");
+    mRenderObject.normalMapId  = tm->LoadTexture("planets/earth/earth_normal.jpg");
+    mRenderObject.bumpMapId    = tm->LoadTexture("planets/earth/earth_bump.jpg");
+    mRenderObject.specMapId    = tm->LoadTexture("planets/earth/earth_spec.jpg");
+
+    const uint32_t size = 512;
+    mRenderTarget.Initialize(size, size,Texture::Format::RGBA_U8);
 }
 
 void GameState::Terminate()
 {
+    mRenderTarget.Terminate();
     mRenderObject.Terminate();
     mStandardEffect.Terminate();
 }
@@ -34,8 +41,15 @@ void GameState::Terminate()
 void GameState::Render()
 {
 
+    mCamera.SetAspectRatio(1.0f);
+        mRenderTarget.BeginRender();
+            mStandardEffect.Begin();
+            mStandardEffect.Render(mRenderObject);
+        mRenderTarget.EndRender();
+    mCamera.SetAspectRatio(.0f);
+
     mStandardEffect.Begin();
-    mStandardEffect.Render(mRenderObject);
+        mStandardEffect.Render(mRenderObject);
     mStandardEffect.End();
 }
 
@@ -92,6 +106,17 @@ void GameState::DebugUI()
             ImGui::ColorEdit4("Emissive##Material", &mRenderObject.material.emissive.r);
             ImGui::DragFloat("Power##Materail", &mRenderObject.material.materialPower);
         }
+        ImGui::Text("Render Target");
+        ImGui::Image(
+            mRenderTarget.GetRawData(),
+            {128, 128},
+            { 0,0 },
+            { 1,1 },
+            { 1,1,1,1 },
+            { 1,1,1,1 }
+        );
+
+
         mStandardEffect.DebugUI();
     ImGui::End();
 

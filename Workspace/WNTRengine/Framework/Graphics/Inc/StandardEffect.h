@@ -42,8 +42,12 @@ namespace WNTRengine::Graphics
 		struct SettingData
 		{
 			int useDiffuseMap = 1;
-			int useNormalMap = 1;
-			int padding[2] = { 0 };
+			int useNormalMap  = 0;
+			int useBumpMap    = 0;
+			int useSpecMap    = 0;
+			int useCelShading = 0;
+			float bumpWeight  = 1.0f;
+			float padding[2]  = { 0.0f };
 		};
 
 
