@@ -120,6 +120,7 @@ void StandardEffect::DebugUI()
 		{
 			mSettingData.useBumpMap = (useBumpMap) ? 1 : 0;
 		}
+		ImGui::DragFloat("BumpWeight##", &mSettingData.bumpWeight, 0.1f, 0.0f, 2.0f);
 		bool useSpecMap = mSettingData.useSpecMap > 0;
 		if (ImGui::Checkbox("UseSpecMap##", &useSpecMap))
 		{
@@ -130,6 +131,5 @@ void StandardEffect::DebugUI()
 		{
 			mSettingData.useCelShading = (useCelShading) ? 1 : 0;
 		}
-		ImGui::DragFloat("BumpWeight##", &mSettingData.bumpWeight, 0.1f, 0.0f, 2.0f);
 	}
 }

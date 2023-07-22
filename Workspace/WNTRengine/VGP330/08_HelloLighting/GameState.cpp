@@ -104,7 +104,7 @@ void GameState::DebugUI()
             ImGui::ColorEdit4("Diffuse##Material", &mRenderObject.material.diffuse.r);
             ImGui::ColorEdit4("Specular##Material", &mRenderObject.material.specular.r);
             ImGui::ColorEdit4("Emissive##Material", &mRenderObject.material.emissive.r);
-            ImGui::DragFloat("Power##Materail", &mRenderObject.material.materialPower);
+            ImGui::DragFloat("Power##Materail", &mRenderObject.material.materialPower,0.01f,1.0f);
         }
         ImGui::Text("Render Target");
         ImGui::Image(

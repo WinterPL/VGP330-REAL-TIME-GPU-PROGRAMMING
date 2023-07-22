@@ -4,7 +4,7 @@ cbuffer TransformBuffer : register(b0)
 {
     matrix world;
 	matrix wvp;
-    float  viewPosition;
+    float3 viewPosition;
 }
 
 cbuffer LightBuffer : register(b1)
@@ -127,7 +127,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
     float4 diffuseMapColor = (useDiffuseMap)?diffuseMap.Sample(textureSampler, input.texCoord):1.0f;
     float4 specMapColor = (useSpecMap) ? specMap.Sample(textureSampler, input.texCoord).r : 1.0f;
     //combine colors for final result
-    float4 finalColor = (ambient + diffuse + materialEmissive) * diffuseMapColor + (specular*specMapColor);
+    float4 finalColor = (ambient + diffuse + emissive) * diffuseMapColor + (specular*specMapColor);
     
 	return finalColor;
 }
