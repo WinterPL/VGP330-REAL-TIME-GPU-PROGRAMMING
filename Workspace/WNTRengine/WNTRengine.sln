@@ -63,6 +63,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_HelloLighting", "VGP330\08_HelloLighting\08_HelloLighting.vcxproj", "{96A43C69-BAB4-4140-B5F5-9A66E8FDE049}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{50B8CF01-9A67-4267-ABFF-E911816DFE46}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\ModelImporter\commands.txt = Tools\ModelImporter\commands.txt
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModelImporter", "Tools\ModelImporter\ModelImporter.vcxproj", "{06D45AE0-C71F-4D2A-B9BC-942CE873B3AC}"
 EndProject

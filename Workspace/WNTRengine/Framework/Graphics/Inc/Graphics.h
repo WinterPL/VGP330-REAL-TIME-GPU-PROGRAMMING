@@ -24,3 +24,5 @@
 #include "TextureManager.h"
 #include "LightType.h"
 #include "Material.h"
+#include "Model.h"
+#include "ModelIO.h"
