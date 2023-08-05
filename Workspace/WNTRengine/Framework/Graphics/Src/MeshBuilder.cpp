@@ -432,6 +432,44 @@ MeshPC MeshBuilder::CreatePlanePC(int numRows, int numCols, int spacing)
 	return mesh;
 }
 
+Mesh MeshBuilder::CreateGroupPlane(int numRows, int numCols, int spacing)
+{
+	Mesh mesh;
+	int index = rand() % 100;
+
+	const float hpw = static_cast<float>(numCols) * spacing * 0.5f;
+	const float hph = static_cast<float>(numRows) * spacing * 0.5f;
+	float uInc = 1.0f / (hpw * 2.0f);
+	float vInc = 1.0f / (hph * 2.0f);
+
+	float x = -hpw;
+	float z = -hph;
+	float u = 0.0f;
+	float v = 1.0f;
+
+	for (int r = 0; r <= numRows; ++r)
+	{
+		for (int c = 0; c <= numCols; ++c)
+		{
+			mesh.vertices.push_back({
+				{x,0.0f,z},
+				{0.0f,1.0f,0.0f},
+				{0.0f,0.0f,1.0f},
+				{u,v}});
+			x += spacing;
+			u += uInc;
+		}
+		u = 0.0f;
+		v -= vInc;
+		x = -hpw;
+		z += spacing;
+	}
+
+	CreatePlaneIndices(mesh.indices, numRows, numCols);
+
+	return mesh;
+}
+
 //cylinder
 MeshPC MeshBuilder::CreateCylinderPC(int slices, int rings)
 {
@@ -460,7 +498,7 @@ MeshPC MeshBuilder::CreateCylinderPC(int slices, int rings)
 	mesh.vertices.push_back({ { 0.0f, -hh, 0.0f }, GetNextColor(index) });
 
 	CreatePlaneIndices(mesh.indices, rings, slices);
-	CreateCapIndices(mesh.indices, slices, mesh.vertices.size() - 2, mesh.vertices.size() - 1);
+	CreateCapIndices(mesh.indices, slices, static_cast<int>(mesh.vertices.size() - 2), static_cast<int>(mesh.vertices.size() - 1));
 
 	return mesh;
 }

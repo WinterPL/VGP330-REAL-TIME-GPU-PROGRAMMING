@@ -21,6 +21,7 @@ namespace WNTRengine::Graphics
 		static MeshPX CreateRectPX(float width, float height, float depth);
 		//Plane
 		static MeshPC CreatePlanePC(int numRows, int numCols, int spacing);
+		static Mesh CreateGroupPlane(int numRows, int numCols, int spacing);
 		//Cylinder
 		static MeshPC CreateCylinderPC(int slices, int rings);
 
