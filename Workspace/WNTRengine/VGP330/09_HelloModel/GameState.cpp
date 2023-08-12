@@ -6,7 +6,7 @@ using namespace WNTRengine::Input;
 
 void GameState::Initialize()
 {
-    mCamera.SetPosition({ 0.0f, 0.0f,-3.0f });
+    mCamera.SetPosition({ 0.0f, 5.0f,-3.0f });
     mCamera.SetLookAt({ 0.0f, 0.0f,0.0f });
 
     mDirectionalLight.direction = WNTRmath::Normalize({ 1.0f,-1.0f,1.0f });

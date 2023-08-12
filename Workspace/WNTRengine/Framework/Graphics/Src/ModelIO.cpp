@@ -29,6 +29,7 @@ void ModelIO::SaveModel(std::filesystem::path filePath, const Model& model)
 
 		const auto& mesh = meshData.mesh;
 		const uint32_t vertexCount = static_cast<uint32_t>(mesh.vertices.size());
+		fprintf_s(file, "VertexCount: %d\n", vertexCount);
 
 		for (auto& v : mesh.vertices)
 		{
@@ -70,7 +71,7 @@ void ModelIO::LoadModel(std::filesystem::path filePath, Model& model)
 
 		auto& mesh = meshData.mesh;
 		uint32_t vertexCount = 0;
-		fscanf_s(file, "vertexCount: %d\n", &vertexCount);
+		fscanf_s(file, "VertexCount: %d\n", &vertexCount);
 		mesh.vertices.resize(vertexCount);
 
 		for (auto& v : mesh.vertices)
@@ -151,7 +152,7 @@ void ModelIO::LoadMaterial(std::filesystem::path filePath, Model& model)
 	};
 
 	uint32_t materialCount = static_cast<uint32_t>(model.materialData.size());
-	fscanf_s(file, "MaterialCount: %d\n", materialCount);
+	fscanf_s(file, "MaterialCount: %d\n", &materialCount);
 	for (auto& materialData : model.materialData)
 	{
 		auto& m = materialData.material;

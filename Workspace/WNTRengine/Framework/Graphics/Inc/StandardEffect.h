@@ -10,7 +10,7 @@
 namespace WNTRengine::Graphics 
 {
 	class Camera;
-	class DirectionalLight;
+	struct DirectionalLight;
 	class RenderObject;
 	class Texture;
 

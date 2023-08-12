@@ -3,7 +3,7 @@ namespace WNTRengine::Graphics
 {
 	class Sampler {
 	public:
-		enum class Filter {point,Linear, Anisotropic};
+		enum class Filter {Point,Linear, Anisotropic};
 		enum class AddressMode {Border,Clamp,Mirror,Wrap};
 
 		Sampler() = default;

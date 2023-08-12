@@ -268,7 +268,7 @@ int main(int  argc, char* argv[])
 			materialData.material.diffuse = ToColor(diffuse);
 			materialData.material.emissive = ToColor(emissive);
 			materialData.material.specular = ToColor(specular);
-			materialData.material.materialPower = specularPower;
+			materialData.material.power = specularPower;
 
 			materialData.diffuseMapName = FindTexture(scene, aiMaterial, aiTextureType_DIFFUSE, arguments, "_diffuse", materialIndex);
 			materialData.normalMapName = FindTexture(scene, aiMaterial, aiTextureType_NORMALS, arguments, "_normal", materialIndex);

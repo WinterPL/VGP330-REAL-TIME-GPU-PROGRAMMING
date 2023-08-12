@@ -93,6 +93,9 @@
     <ClInclude Include="Inc\ModelManager.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="Inc\PostProcessingEffect.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Precompiled.cpp">
@@ -148,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="Src\RenderObject.cpp" />
     <ClCompile Include="Src\ModelManager.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PostProcessingEffect.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

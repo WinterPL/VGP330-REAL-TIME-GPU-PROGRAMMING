@@ -8,7 +8,7 @@ using namespace WNTRengine::Graphics;
 namespace {
 	D3D11_FILTER GetFilter(Sampler::Filter filter) {
 		switch (filter) {
-		case Sampler::Filter::point: return D3D11_FILTER_MIN_MAG_MIP_POINT;
+		case Sampler::Filter::Point: return D3D11_FILTER_MIN_MAG_MIP_POINT;
 		case Sampler::Filter::Linear: return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 		case Sampler::Filter::Anisotropic: return D3D11_FILTER_ANISOTROPIC;
 		}
