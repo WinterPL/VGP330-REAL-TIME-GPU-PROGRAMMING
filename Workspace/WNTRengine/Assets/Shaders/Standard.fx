@@ -4,6 +4,7 @@ cbuffer TransformBuffer : register(b0)
 {
     matrix world;
 	matrix wvp;
+	matrix lwvp;
     float3 viewPosition;
 }
 
@@ -31,7 +32,9 @@ cbuffer SettingBuffer : register(b3)
     bool useBumpMap;
     bool useSpecMap;
     bool useCelShading;
+    bool useShadowMap;
     float bumpWeight;
+    float depthBias;
 }
 
 
@@ -39,6 +42,7 @@ Texture2D diffuseMap : register(t0);
 Texture2D normalMap : register(t1);
 Texture2D bumpMap : register(t2);
 Texture2D specMap : register(t3);
+Texture2D shadowMap : register(t4);
 
 SamplerState textureSampler : register(s0);
 
@@ -58,6 +62,7 @@ struct VS_OUTPUT
     float3 dirToLight : TEXCOORD0;
     float3 dirToView : TEXCOORD1;
 	float2 texCoord : TEXCOORD2;
+    float4 lightNDCPosition : TEXCOORD3;
 };
 
 VS_OUTPUT VS(VS_INPUT input)
@@ -78,6 +83,11 @@ VS_OUTPUT VS(VS_INPUT input)
     output.dirToLight = -lightDirection;
     output.dirToView = normalize(viewPosition - mul(float4(localPosition, 1.0f), toWorld).xyz);
 	output.texCoord = input.texCoord;
+    if (useShadowMap)
+    {
+        output.lightNDCPosition = mul(float4(localPosition, 1.0f), lwvp);
+    }
+
 	return output;
 }
 
@@ -102,7 +112,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
     //ambient color
     float4 ambient = lightAmbient*materialAmbient;
     //diffuse color
-    float4 d = saturate(dot(light, n));
+    float d = saturate(dot(light, n));
     float dIntensity = (useCelShading)? smoothstep(0.005f,0.01f,d) : d;
     float4 diffuse = dIntensity * lightDiffuse * materialDiffuse;
     //specular
@@ -129,5 +139,21 @@ float4 PS(VS_OUTPUT input) : SV_Target
     //combine colors for final result
     float4 finalColor = (ambient + diffuse + emissive) * diffuseMapColor + (specular*specMapColor);
     
+    if (useShadowMap)
+    {
+        float actualDepth = 1.0f - (input.lightNDCPosition.z / input.lightNDCPosition.w);
+        float2 shadowUV = input.lightNDCPosition.xy / input.lightNDCPosition.w;
+        float u = (shadowUV.x + 1.0f) * 0.5f;
+        float v = 1.0f - (shadowUV.y + 1.0f) * 0.5f;
+        if (saturate(u) == u && saturate(v) == v)
+        {
+            float4 savedColor = shadowMap.Sample(textureSampler, float2(u, v));
+            float savedDepth = savedColor.r;
+            if (savedDepth > actualDepth + depthBias) 
+            {
+                finalColor = (ambient + materialEmissive) * diffuseMapColor;
+            }
+        }
+    }
 	return finalColor;
 }

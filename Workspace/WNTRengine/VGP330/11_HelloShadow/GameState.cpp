@@ -18,54 +18,45 @@ void GameState::Initialize()
     mStandardEffect.Initialize(shaderFile);
     mStandardEffect.SetCamera(mCamera);
     mStandardEffect.SetDirectionalLight(mDirectionalLight);
+    mStandardEffect.SetShadowMap(mShadowEffect.GetDepthMap());
+    mStandardEffect.SetLightCamera(mShadowEffect.GetLightCamera());
 
-    mPostProcessingEffect.Initialize(L"../../Assets/Shaders/PostProcess.fx");
-    mPostProcessingEffect.SetTexture(&mRenderTarget);
-    mPostProcessingEffect.SetTexture(&mCombineTexture,1);
-
-    auto gs = GraphicsSystem::Get();
-    const auto screenWidth = gs->GetBackBufferWidth();
-    const auto screenHeight = gs->GetBackBufferHeight();
-    mRenderTarget.Initialize(screenWidth, screenHeight, RenderTarget::Format::RGBA_U8);
-    mCombineTexture.Initialize(L"../../Assets/Textures/water/water_texture.jpg");
+    mShadowEffect.Initialize();
+    mShadowEffect.SetDirectionalLight(mDirectionalLight);
 
     ModelId modelId = ModelManager::Get()->LoadModel(L"../../Assets/Models/Character/Character.model");
     mCharacter = CreateRenderGroup(modelId);
 
-    Mesh groundMesh = MeshBuilder::CreateGroupPlane(20, 20, (int)1.0f);
+    Mesh groundMesh = MeshBuilder::CreateGroupPlane(20, 20, 1.0f);
     mGround.meshBuffer.Initialize(groundMesh);
     mGround.diffuseMapId = TextureManager::Get()->LoadTexture(L"misc/basketball.jpg");
     mGround.material.ambient = { 0.3f, 0.3f, 0.3f, 1.0f };
     mGround.material.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
     mGround.material.specular = { 0.9f, 0.9f, 0.9f, 1.0f };
     mGround.material.power = 20.f;
-
-    MeshPX screenQuad = MeshBuilder::CreateScreenQuad();
-    mScreenQuad.meshBuffer.Initialize(screenQuad);
+   
 }
 
 void GameState::Terminate()
 {
-    mCombineTexture.Terminate();
+   
     CleanupRenderGroup(mCharacter);
     mGround.Terminate();
-    mRenderTarget.Terminate();
-    mPostProcessingEffect.Terminate();
+    mShadowEffect.Terminate();
     mStandardEffect.Terminate();
 }
 
 void GameState::Render()
 {
-   mRenderTarget.BeginRender();
-        mStandardEffect.Begin();
-           DrawRenderGroup(mStandardEffect, mCharacter);
-           mStandardEffect.Render(mGround);
-        mStandardEffect.End();
-   mRenderTarget.EndRender();
+    mShadowEffect.Begin();
+    DrawRenderGroup(mShadowEffect, mCharacter);
+    mShadowEffect.End();
 
-    mPostProcessingEffect.Begin();
-        mPostProcessingEffect.Render(mScreenQuad);
-    mPostProcessingEffect.End();
+    mStandardEffect.Begin();
+        DrawRenderGroup(mStandardEffect, mCharacter);
+        mStandardEffect.Render(mGround);
+    mStandardEffect.End();
+  
 }
 
 void GameState::Update(float deltaTime)
@@ -99,6 +90,7 @@ void GameState::Update(float deltaTime)
         mCamera.Pitch(input->GetMouseMoveY() * turnSpeed);
     }
 
+   // mShadowEffect.SetFocus({ mCamera.GetPosition().x,0.0f,mCamera.GetPosition().y });
 }
 
 void GameState::DebugUI()
@@ -106,7 +98,7 @@ void GameState::DebugUI()
     ImGui::Begin("Debug Draw", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
         if (ImGui::CollapsingHeader("Lighting##", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            if (ImGui::DragFloat3("Directional##Light", &mDirectionalLight.direction.x, 0.01f, -0.01f, 1.0f)){
+            if (ImGui::DragFloat3("Directional##Light", &mDirectionalLight.direction.x, 0.01f, -1.00f, 1.0f)){
                 mDirectionalLight.direction = WNTRmath::Normalize(mDirectionalLight.direction);
             }
             ImGui::ColorEdit4("Ambient##Light", &mDirectionalLight.ambient.r);
@@ -122,17 +114,10 @@ void GameState::DebugUI()
             //ImGui::DragFloat("Power##Materail", &mRenderObject.material.materialPower,0.01f,1.0f);
         }
 
-        ImGui::Image(
-            mRenderTarget.GetRawData(),
-            { 128,128 },
-            { 0, 0 },
-            { 1,1 },
-            { 1,1,1,1 },
-            { 1,1,1,1 });
         mStandardEffect.DebugUI();
-        mPostProcessingEffect.DebugUI();
-    ImGui::End();
+        mShadowEffect.DebugUI();
 
+        ImGui::End();
 }
 
 

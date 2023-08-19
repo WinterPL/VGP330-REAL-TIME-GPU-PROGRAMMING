@@ -51,7 +51,10 @@ void StandardEffect::Begin()
 }
 void StandardEffect::End()
 {
-	//Nothing RN
+	if (mShadowMap != nullptr)
+	{
+		Texture::UnbindPS(4);
+	}
 }
 
 void StandardEffect::Render(const RenderObject& renderObject)
@@ -60,18 +63,6 @@ void StandardEffect::Render(const RenderObject& renderObject)
 	const auto& matView = mCamera->GetViewMatrix();
 	const auto& matProj = mCamera->GetProjectionMatrix();
 
-	
-	TransformData transformData;
-	transformData.world = Transpose(matWorld);
-	transformData.wvp = Transpose(matWorld * matView * matProj);
-	transformData.viewPosition = mCamera->GetPosition();
-	mTransformBuffer.Update(transformData);
-
-	mLightingBuffer.Update(*mDirectionalLight);
-
-	mMaterialBuffer.Update(renderObject.material);
-
-
 	SettingData settingData;
 	settingData.useDiffuseMap = mSettingData.useDiffuseMap > 0 && renderObject.diffuseMapId != 0;
 	settingData.useNormalMap = mSettingData.useNormalMap > 0 && renderObject.normalMapId != 0;
@@ -79,8 +70,28 @@ void StandardEffect::Render(const RenderObject& renderObject)
 	settingData.useBumpMap = mSettingData.useBumpMap > 0 && renderObject.bumpMapId != 0;
 	settingData.useSpecMap = mSettingData.useSpecMap > 0 && renderObject.specMapId != 0;
 	settingData.useCelShading = mSettingData.useCelShading;
+	settingData.useShadowMap = mSettingData.useShadowMap > 0 && mShadowMap != nullptr;
 	settingData.bumpWeight = mSettingData.bumpWeight;
+	settingData.depthBias = mSettingData.depthBias;
 	mSettingBuffer.Update(mSettingData);
+	
+	TransformData transformData;
+	transformData.world = Transpose(matWorld);
+	transformData.wvp = Transpose(matWorld * matView * matProj);
+	transformData.viewPosition = mCamera->GetPosition();
+	if (settingData.useShadowMap)
+	{
+		const auto& matLightView = mLightCamera->GetViewMatrix();
+		const auto& matLightProj = mLightCamera->GetProjectionMatrix();
+		transformData.lwvp = Transpose(matWorld * matLightView * matLightProj);
+
+		mShadowMap->BindPS(4);
+	}
+	mTransformBuffer.Update(transformData);
+
+	mLightingBuffer.Update(*mDirectionalLight);
+
+	mMaterialBuffer.Update(renderObject.material);
 
 	auto tm = TextureManager::Get();
 	tm->BindPS(renderObject.diffuseMapId, 0);
@@ -96,10 +107,19 @@ void StandardEffect::SetCamera(const Camera& camera)
 	mCamera = &camera;
 }
 
+void StandardEffect::SetLightCamera(const Camera& camera)
+{
+	mLightCamera = &camera;
+}
+
 void StandardEffect::SetDirectionalLight(const DirectionalLight& directionalLight)
 {
 	mDirectionalLight = &directionalLight;
 }
+void StandardEffect::SetShadowMap(const Texture& shadowMap) {
+	mShadowMap = &shadowMap;
+}
+
 
 void StandardEffect::DebugUI()
 {
@@ -119,8 +139,8 @@ void StandardEffect::DebugUI()
 		if (ImGui::Checkbox("UseBumpMap##", &useBumpMap))
 		{
 			mSettingData.useBumpMap = (useBumpMap) ? 1 : 0;
-		}
 		ImGui::DragFloat("BumpWeight##", &mSettingData.bumpWeight, 0.1f, 0.0f, 2.0f);
+		}
 		bool useSpecMap = mSettingData.useSpecMap > 0;
 		if (ImGui::Checkbox("UseSpecMap##", &useSpecMap))
 		{
@@ -131,5 +151,11 @@ void StandardEffect::DebugUI()
 		{
 			mSettingData.useCelShading = (useCelShading) ? 1 : 0;
 		}
+		bool useShadowMap = mSettingData.useShadowMap > 0;
+		if (ImGui::Checkbox("UseShadowMap##", &useShadowMap))
+		{
+			mSettingData.useShadowMap = (useShadowMap) ? 1 : 0;
+		}
+		ImGui::DragFloat("DepthBias##", &mSettingData.depthBias, 0.0000001f, 0.0f, 1.0f , "%.6f");
 	}
 }

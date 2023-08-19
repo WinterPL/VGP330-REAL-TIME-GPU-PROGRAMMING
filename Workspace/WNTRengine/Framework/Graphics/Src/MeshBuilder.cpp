@@ -81,11 +81,11 @@ namespace
 	}
 	void CreatePlaneIndices(std::vector<uint32_t>& indices, int numRows, int numColumns)
 	{
-		for (int r = 0; r <= numRows; ++r)
+		for (int r = 0; r < numRows; ++r)
 		{
 			for (int c = 0; c < numColumns; ++c)
 			{
-				int i = (r * numColumns + 1) + c;
+				int i = (r * (numColumns + 1)) + c;
 
 				//triangle 1
 				indices.push_back(i);
@@ -432,15 +432,15 @@ MeshPC MeshBuilder::CreatePlanePC(int numRows, int numCols, int spacing)
 	return mesh;
 }
 
-Mesh MeshBuilder::CreateGroupPlane(int numRows, int numCols, int spacing)
+Mesh MeshBuilder::CreateGroupPlane(int numRows, int numCols, float spacing)
 {
 	Mesh mesh;
 	int index = rand() % 100;
 
 	const float hpw = static_cast<float>(numCols) * spacing * 0.5f;
 	const float hph = static_cast<float>(numRows) * spacing * 0.5f;
-	float uInc = 1.0f / (hpw * 2.0f);
-	float vInc = 1.0f / (hph * 2.0f);
+	float uInc = 1.0f / (float)(numCols);
+	float vInc = 1.0f / (float)(numRows);
 
 	float x = -hpw;
 	float z = -hph;

@@ -151,8 +151,9 @@ void ModelIO::LoadMaterial(std::filesystem::path filePath, Model& model)
 		}
 	};
 
-	uint32_t materialCount = static_cast<uint32_t>(model.materialData.size());
+	uint32_t materialCount = 0;
 	fscanf_s(file, "MaterialCount: %d\n", &materialCount);
+	model.materialData.resize(materialCount);
 	for (auto& materialData : model.materialData)
 	{
 		auto& m = materialData.material;

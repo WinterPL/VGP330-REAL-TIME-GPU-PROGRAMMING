@@ -26,7 +26,9 @@ namespace WNTRengine::Graphics
 		void Render(const RenderObject& renderObject);
 
 		void SetCamera(const Camera& camera);
+		void SetLightCamera(const Camera& camera);
 		void SetDirectionalLight(const DirectionalLight& directionalLight);
+		void SetShadowMap(const Texture& shadowMap);
 
 		void DebugUI();
 
@@ -35,6 +37,7 @@ namespace WNTRengine::Graphics
 		{
 			WNTRmath::Matrix4 world;
 			WNTRmath::Matrix4 wvp;
+			WNTRmath::Matrix4 lwvp;
 			WNTRmath::Vector3 viewPosition;
 			float padding = 0;
 		};
@@ -46,8 +49,9 @@ namespace WNTRengine::Graphics
 			int useBumpMap    = 0;
 			int useSpecMap    = 0;
 			int useCelShading = 0;
+			int useShadowMap  = 0;
 			float bumpWeight  = 1.0f;
-			float padding[2]  = { 0.0f };
+			float depthBias  = 0.000050f;
 		};
 
 
@@ -60,13 +64,14 @@ namespace WNTRengine::Graphics
 		MaterialBuffer mMaterialBuffer;
 		SettingBuffer mSettingBuffer;
 
-		//ConstantBuffer mTransformBuffer;
 		VertexShader mVertexShader;
 		PixelShader mPixelShader;
 		Sampler mSampler;
 
 		SettingData mSettingData;
 		const Camera* mCamera = nullptr;
+		const Camera* mLightCamera = nullptr;
 		const DirectionalLight* mDirectionalLight = nullptr;
+		const Texture* mShadowMap = nullptr;
 	};
 }
