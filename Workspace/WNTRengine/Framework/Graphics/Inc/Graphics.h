@@ -30,3 +30,5 @@
 #include "PostProcessingEffect.h"
 #include "ShadowEffect.h"
 #include "GaussianBlurEffect.h"
+#include "Terrain.h"
+#include "TerrainEffect.h"
