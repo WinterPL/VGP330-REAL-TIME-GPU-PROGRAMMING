@@ -24,10 +24,5 @@ namespace WNTRengine::Graphics {
 		ID3D11RenderTargetView* mOldRenderTargetView = nullptr;
 		ID3D11DepthStencilView* mOldDepthStencilView = nullptr;
 		D3D11_VIEWPORT mOldViewport{};
-
 	};
-
-
-
-
 }

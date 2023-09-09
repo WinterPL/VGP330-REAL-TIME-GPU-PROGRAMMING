@@ -104,7 +104,7 @@ float4 PS(VS_OUTPUT input) : SV_Target
         colorToUse = specMapColor;
     }
     else{
-        float t = (input.worldPosition - 10.0f) / 5.0f;
+        float t = (input.worldPosition.y - 10.0f) / 5.0f;
         colorToUse = lerp(diffuseMapColor, specMapColor, t);
     }
     
@@ -126,6 +126,6 @@ float4 PS(VS_OUTPUT input) : SV_Target
             }
         }
     }
-	//return finalColor;
-	return colorToUse;
+    return finalColor;
+	//return colorToUse;
 }

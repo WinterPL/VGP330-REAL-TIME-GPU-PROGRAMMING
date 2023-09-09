@@ -8,7 +8,8 @@ namespace WNTRengine::Graphics {
 			Opaque,
 			AlphaBlend,
 			AlphaPreMultiplied,
-			Additive
+			Additive,
+			Transparent
 		};
 
 		BlendState() = default;

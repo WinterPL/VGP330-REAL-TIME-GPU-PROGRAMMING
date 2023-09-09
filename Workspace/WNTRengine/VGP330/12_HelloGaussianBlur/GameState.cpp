@@ -66,7 +66,7 @@ void GameState::Terminate()
     mBaseRenderTarget.Terminate();
 
     mPostProcessingEffect.Terminate();
-    mGaussianEffect.Terminate();
+     mGaussianEffect.Terminate();
     mStandardEffect.Terminate();
 }
 

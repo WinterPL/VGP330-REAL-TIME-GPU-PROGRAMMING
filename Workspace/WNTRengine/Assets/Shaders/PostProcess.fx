@@ -82,8 +82,8 @@ float4 PS(VS_OUTPUT input) : SV_Target
 	}
 	else if (mode == 6)//MotionBlur
 	{
-
-	}
+		
+    }
 
     return finalColor;
 }
