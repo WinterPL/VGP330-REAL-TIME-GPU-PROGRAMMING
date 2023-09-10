@@ -17,10 +17,12 @@ public:
 
 protected:
 
+
 	Camera mCamera;
 	DirectionalLight mDirectionalLight;
 
-	TransparentEffect mTransparentEffect;
+	TransparentEffectUpgrade mTransparentEffect;
+	//TransparentEffect mTransparentEffect;
 	GaussianBlurEffect mGaussianEffect;
 	PostProcessingEffect mPostProcessingEffect;
 
@@ -31,7 +33,8 @@ protected:
 	RenderTarget mBaseRenderTarget;
 	RenderTarget mBloomRenderTarget;
 
-	float mEarthOffset = 8.0f;
+	float mEarthOffset = 0.0f;
+	//float mEarthOffset = 8.0f;
 	float mEarthRotation = 0.0f;
 	float mEarthRevolution = 0.0f;
 };

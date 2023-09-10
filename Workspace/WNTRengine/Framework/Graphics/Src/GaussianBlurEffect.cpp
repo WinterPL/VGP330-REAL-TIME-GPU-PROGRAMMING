@@ -46,8 +46,8 @@ void GaussianBlurEffect::Begin()
 	const auto screenHeight = gs->GetBackBufferHeight();
 
 	SettingData data;
-	data.screenWidth = screenWidth;
-	data.screenHeight = screenHeight;
+	data.screenWidth = static_cast<float>(screenWidth);
+	data.screenHeight = static_cast<float>(screenHeight);
 	data.multiplier = mBlurSaturation;
 	mSettingBuffer.Update(data);
 	mSettingBuffer.BindPS(0);

@@ -7,7 +7,7 @@ using namespace WNTRengine::Input;
 void GameState::Initialize()
 {
 
-    mCamera.SetPosition({ 0.0f, 15.0f,-5.0f });
+    mCamera.SetPosition({ 0.0f, 5.0f,-15.0f });
     mCamera.SetLookAt({ 0.0f, 0.0f,0.0f });
 
     mDirectionalLight.direction = WNTRmath::Normalize({ 1.0f,-1.0f,1.0f });
@@ -74,25 +74,25 @@ void GameState::Terminate()
 void GameState::Render()
 {
     mBaseRenderTarget.BeginRender();
-         mTransparentEffect.Begin();
-             mTransparentEffect.Render(mSunRenderObject);
-             mTransparentEffect.Render(mEarthRenderObject);
-         mTransparentEffect.End();
+     mTransparentEffect.Begin();
+         mTransparentEffect.Render(mSunRenderObject);
+         mTransparentEffect.Render(mEarthRenderObject);
+     mTransparentEffect.End();
 
-        SimpleDraw::AddGroundPlane(20.0f, Colors::White);
-        SimpleDraw::Render(mCamera);
+    SimpleDraw::AddGroundPlane(20.0f, Colors::White);
+    SimpleDraw::Render(mCamera);
     mBaseRenderTarget.EndRender();
 
 
     mBloomRenderTarget.BeginRender();
-        Material dummyMaterial;
-        dummyMaterial.power = 1.0f;
-        std::swap(mEarthRenderObject.material, dummyMaterial);
-             mTransparentEffect.Begin();
-                 mTransparentEffect.Render(mSunRenderObject);
-                 mTransparentEffect.Render(mEarthRenderObject);
-             mTransparentEffect.End();
-        std::swap(mEarthRenderObject.material, dummyMaterial);
+    Material dummyMaterial;
+    dummyMaterial.power = 1.0f;
+    std::swap(mEarthRenderObject.material, dummyMaterial);
+     mTransparentEffect.Begin();
+     //mTransparentEffect.Render(mSunRenderObject);
+     mTransparentEffect.Render(mEarthRenderObject);
+     mTransparentEffect.End();
+    std::swap(mEarthRenderObject.material, dummyMaterial);
     mBloomRenderTarget.EndRender();
 
     mGaussianEffect.Begin();
@@ -100,7 +100,7 @@ void GameState::Render()
     mGaussianEffect.End();
 
     mPostProcessingEffect.Begin();
-        mPostProcessingEffect.Render(mScreenQuad);
+    mPostProcessingEffect.Render(mScreenQuad);
     mPostProcessingEffect.End();
 
 }
@@ -160,7 +160,7 @@ void GameState::DebugUI()
     ImGui::DragFloat("Revolution", &mEarthRevolution, 0.01f);
 
     mTransparentEffect.DebugUI();
-    mPostProcessingEffect.DebugUI();
+    //mPostProcessingEffect.DebugUI();
     mGaussianEffect.DebugUI();
     ImGui::End();
 

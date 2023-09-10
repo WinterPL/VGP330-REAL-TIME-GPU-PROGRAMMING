@@ -52,7 +52,7 @@ namespace WNTRengine::Graphics
 		Sampler mSampler;
 		std::array<const Texture*, 4> mTextures;
 
-		Mode mMode = Mode::None;
+		Mode mMode = Mode::Combine2;
 
 		float mMirrorScaleX = -1.0f;
 		float mMirrorScaleY = -1.0f;

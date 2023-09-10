@@ -57,8 +57,8 @@ namespace WNTRengine::Graphics
 
 		const Texture* mSourceTexture = nullptr;
 
-		int mBlurIterations = 1;
-		float mBlurSaturation = 1.0f;
+		int mBlurIterations = 2;
+		float mBlurSaturation = 5.0f;
 	};				
 
 

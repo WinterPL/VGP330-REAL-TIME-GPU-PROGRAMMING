@@ -44,6 +44,7 @@ Texture2D normalMap : register(t1);
 Texture2D bumpMap : register(t2);
 Texture2D specMap : register(t3);
 Texture2D shadowMap : register(t4);
+Texture2D textureMap : register(t5);
 
 SamplerState textureSampler : register(s0);
 

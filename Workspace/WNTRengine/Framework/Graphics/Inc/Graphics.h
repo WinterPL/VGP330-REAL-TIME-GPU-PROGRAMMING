@@ -33,3 +33,4 @@
 #include "Terrain.h"
 #include "TerrainEffect.h"
 #include "TransparentEffect.h"
+#include "TransparentEffectUpgrade.h"
