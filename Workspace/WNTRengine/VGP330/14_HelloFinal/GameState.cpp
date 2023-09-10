@@ -15,11 +15,9 @@ void GameState::Initialize()
     mDirectionalLight.specular = { 0.9f,0.9f,0.9f,1.0f };
 
     std::filesystem::path shaderFile = L"../../Assets/Shaders/TransparentObject.fx";
-    mStandardEffect.Initialize(shaderFile);
-    mStandardEffect.SetCamera(mCamera);
-    mStandardEffect.SetDirectionalLight(mDirectionalLight);
-
-    mTransparentEffect.Initialize();
+    mTransparentEffect.Initialize(shaderFile);
+    mTransparentEffect.SetCamera(mCamera);
+    mTransparentEffect.SetDirectionalLight(mDirectionalLight);
     mTransparentEffect.SetBlurIterations(10);
     mTransparentEffect.SetBlurSaturation(1.0f);
     mTransparentEffect.SetAlphaPower(0.5f);
@@ -69,7 +67,6 @@ void GameState::Terminate()
 
     mPostProcessingEffect.Terminate();
      mTransparentEffect.Terminate();
-    mStandardEffect.Terminate();
     mBlendState.Terminate();
 }
 
@@ -77,36 +74,31 @@ void GameState::Render()
 {
     mBlendState.set();
     mBaseRenderTarget.BeginRender();
-        mStandardEffect.Begin();
-            mStandardEffect.Render(mSunRenderObject);
-           //mStandardEffect.Render(mEarthRenderObject);
-        mStandardEffect.End();
-         SimpleDraw::AddGroundPlane(20.0f, Colors::White);
+        mTransparentEffect.Begin();
+            mTransparentEffect.Render(mSunRenderObject);
+            mTransparentEffect.Render(mEarthRenderObject);
+        mTransparentEffect.End();
+        SimpleDraw::AddGroundPlane(20.0f, Colors::White);
          SimpleDraw::Render(mCamera);
-            mTransparentEffect.Begin();
-                mTransparentEffect.Render(mEarthRenderObject);
-            mTransparentEffect.End();
     mBaseRenderTarget.EndRender();
 
    
 
-    mBloomRenderTarget.BeginRender();
-    Material dummyMaterial;
-    dummyMaterial.power = 1.0f;
-    std::swap(mEarthRenderObject.material, dummyMaterial);
-        mStandardEffect.Begin();
-        //mStandardEffect.Render(mSunRenderObject);
-         mStandardEffect.Render(mEarthRenderObject);
-        mStandardEffect.End();
-    std::swap(mEarthRenderObject.material, dummyMaterial);
-    mBloomRenderTarget.EndRender();
+    //mBloomRenderTarget.BeginRender();
+    //Material dummyMaterial;
+    //dummyMaterial.power = 1.0f;
+    //std::swap(mEarthRenderObject.material, dummyMaterial);
+    //    mStandardEffect.Begin();
+    //    //mStandardEffect.Render(mSunRenderObject);
+    //     //mStandardEffect.Render(mEarthRenderObject);
+    //    mStandardEffect.End();
+    //std::swap(mEarthRenderObject.material, dummyMaterial);
+    //mBloomRenderTarget.EndRender();
 
-    mTransparentEffect.Begin();
-        mTransparentEffect.Render(mScreenQuad);
-     mTransparentEffect.End();
+    //
   
     mPostProcessingEffect.Begin();
-    mPostProcessingEffect.Render(mScreenQuad);
+        mPostProcessingEffect.Render(mScreenQuad);
     mPostProcessingEffect.End();
 
     BlendState::ClearState();
@@ -167,7 +159,7 @@ void GameState::DebugUI()
         ImGui::DragFloat("Rotation", &mEarthRotation, 0.01f);
         ImGui::DragFloat("Revolution", &mEarthRevolution, 0.01f);
 
-        mStandardEffect.DebugUI();
+        //mStandardEffect.DebugUI();
         mPostProcessingEffect.DebugUI();
         mTransparentEffect.DebugUI();
         

@@ -35,6 +35,11 @@ cbuffer SettingBuffer : register(b3)
     bool useShadowMap;
     float bumpWeight;
     float depthBias;
+    
+    float screenWidth;
+    float screenHeight;
+    float multiplier;
+    float alphaPower;
 }
 
 
@@ -43,6 +48,7 @@ Texture2D normalMap : register(t1);
 Texture2D bumpMap : register(t2);
 Texture2D specMap : register(t3);
 Texture2D shadowMap : register(t4);
+Texture2D textureMap : register(t5);
 
 SamplerState textureSampler : register(s0);
 
@@ -64,6 +70,8 @@ struct VS_OUTPUT
 	float2 texCoord : TEXCOORD2;
     float4 lightNDCPosition : TEXCOORD3;
 };
+
+static const float gaussianWeights[5] = { 0.227027f, 0.1945946f, 0.1216216f, 0.054054f, 0.016216f };
 
 VS_OUTPUT VS(VS_INPUT input)
 {
@@ -155,6 +163,31 @@ float4 PS(VS_OUTPUT input) : SV_Target
             }
         }
     }
-   //finalColor.a = 0.5f;
+   finalColor.a = alphaPower;
 	return finalColor;
+}
+
+float4 HorizontalBlurPS(VS_OUTPUT input) : SV_Target
+{
+    float2 offset = float2(2.0f / screenWidth, 0.0f);
+    float4 finalColor = textureMap.Sample(textureSampler, input.texCoord) * gaussianWeights[0];
+    for (int i = 1; i < 5; ++i)
+    {
+        finalColor += textureMap.Sample(textureSampler, input.texCoord + (offset * i)) * gaussianWeights[i];
+        finalColor += textureMap.Sample(textureSampler, input.texCoord - (offset * i)) * gaussianWeights[i];
+    }
+    return finalColor * multiplier;
+}
+
+float4 VerticalBlurPS(VS_OUTPUT input) : SV_Target
+{
+    float2 offset = float2(0.0f, 2.0f / screenHeight);
+    float4 finalColor = textureMap.Sample(textureSampler, input.texCoord) * gaussianWeights[0];
+    for (int i = 1; i < 5; ++i)
+    {
+        finalColor += textureMap.Sample(textureSampler, input.texCoord + (offset * i)) * gaussianWeights[i];
+        finalColor += textureMap.Sample(textureSampler, input.texCoord - (offset * i)) * gaussianWeights[i];
+    }
+    
+    return finalColor * multiplier;
 }

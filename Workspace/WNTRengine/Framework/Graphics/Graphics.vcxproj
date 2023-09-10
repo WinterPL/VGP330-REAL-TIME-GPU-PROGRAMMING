@@ -177,7 +177,7 @@
     <ClInclude Include="Inc\Texture.h" />
     <ClInclude Include="Inc\TextureManager.h" />
     <ClInclude Include="Inc\Transform.h" />
-    <ClInclude Include="Inc\Transparent.h" />
+    <ClInclude Include="Inc\TransparentEffect.h" />
     <ClInclude Include="Inc\VertexShader.h" />
     <ClInclude Include="Inc\VertexTypes.h" />
     <ClInclude Include="Src\Precompiled.h" />
@@ -208,7 +208,7 @@
     <ClCompile Include="Src\TerrainEffect.cpp" />
     <ClCompile Include="Src\Texture.cpp" />
     <ClCompile Include="Src\TextureManager.cpp" />
-    <ClCompile Include="Src\Transparent.cpp" />
+    <ClCompile Include="Src\TransparentEffect.cpp" />
     <ClCompile Include="Src\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>

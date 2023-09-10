@@ -32,4 +32,4 @@
 #include "GaussianBlurEffect.h"
 #include "Terrain.h"
 #include "TerrainEffect.h"
-#include "Transparent.h"
+#include "TransparentEffect.h"
