@@ -21,7 +21,6 @@ void GameState::Initialize()
     mTransparentEffect.SetBlurIterations(10);
     mTransparentEffect.SetBlurSaturation(1.0f);
     mTransparentEffect.SetAlphaPower(0.5f);
-    mTransparentEffect.SetSourceTexture(mBloomRenderTarget);
 
     mPostProcessingEffect.Initialize(L"../../Assets/Shaders/PostProcess.fx");
     mPostProcessingEffect.SetTexture(&mBaseRenderTarget);
@@ -85,17 +84,16 @@ void GameState::Render()
    
 
     //mBloomRenderTarget.BeginRender();
-    //Material dummyMaterial;
-    //dummyMaterial.power = 1.0f;
-    //std::swap(mEarthRenderObject.material, dummyMaterial);
+    // Material dummyMaterial;
+    // dummyMaterial.power = 1.0f;
+    // std::swap(mEarthRenderObject.material, dummyMaterial);
     //    mStandardEffect.Begin();
-    //    //mStandardEffect.Render(mSunRenderObject);
-    //     //mStandardEffect.Render(mEarthRenderObject);
+    //    mStandardEffect.Render(mSunRenderObject);
+    //    mStandardEffect.Render(mEarthRenderObject);
     //    mStandardEffect.End();
-    //std::swap(mEarthRenderObject.material, dummyMaterial);
+    // std::swap(mEarthRenderObject.material, dummyMaterial);
     //mBloomRenderTarget.EndRender();
 
-    //
   
     mPostProcessingEffect.Begin();
         mPostProcessingEffect.Render(mScreenQuad);

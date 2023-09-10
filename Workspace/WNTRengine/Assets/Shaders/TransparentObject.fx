@@ -188,6 +188,5 @@ float4 VerticalBlurPS(VS_OUTPUT input) : SV_Target
         finalColor += textureMap.Sample(textureSampler, input.texCoord + (offset * i)) * gaussianWeights[i];
         finalColor += textureMap.Sample(textureSampler, input.texCoord - (offset * i)) * gaussianWeights[i];
     }
-    
     return finalColor * multiplier;
 }

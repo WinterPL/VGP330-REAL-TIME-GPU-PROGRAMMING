@@ -76,8 +76,8 @@ void Transparent::Begin()
 	const auto screenHeight = gs->GetBackBufferHeight();
 
 	SettingData data;
-	data.screenWidth = screenWidth;
-	data.screenHeight = screenHeight;
+	data.screenWidth = static_cast<float>(screenWidth);
+	data.screenHeight = static_cast<float>(screenHeight);
 	data.multiplier = mBlurSaturation;
 	data.alphaPower = mAlphaPower;
 	mSettingBuffer.Update(data);
@@ -149,7 +149,7 @@ void Transparent::Render(const RenderObject& renderObject)
 	Texture::UnbindPS(5);
 	mHorizontalBlurRenderTarget.EndRender();
 
-	for (uint32_t i = 1; i < mBlurIterations; ++i)
+	for (uint32_t i = 1; i < static_cast<int>(mBlurIterations); ++i)
 	{
 		mVerticalBlurRenderTarget.BeginRender();
 		mHorizontalBlurRenderTarget.BindPS(0);
@@ -159,14 +159,14 @@ void Transparent::Render(const RenderObject& renderObject)
 		mVerticalBlurRenderTarget.EndRender();
 
 		mHorizontalBlurRenderTarget.BeginRender();
-		mVerticalBlurRenderTarget.BindPS(5);
+		mVerticalBlurRenderTarget.BindPS(0);
 		mHorizontalBlurPixelShader.Bind();
 		renderObject.meshBuffer.Render();
 		Texture::UnbindPS(5);
 		mHorizontalBlurRenderTarget.EndRender();
 	}
 	mVerticalBlurRenderTarget.BeginRender();
-	mHorizontalBlurRenderTarget.BindPS(5);
+	mHorizontalBlurRenderTarget.BindPS(0);
 	mVerticalBlurPixelShader.Bind();
 	renderObject.meshBuffer.Render();
 	Texture::UnbindPS(5);
@@ -211,6 +211,7 @@ void Transparent::DebugUI()
 			mSettingData.useBumpMap = (useBumpMap) ? 1 : 0;
 		}
 		if (useBumpMap == true) {
+
 		ImGui::DragFloat("BumpWeight##", &mSettingData.bumpWeight, 0.1f, 0.0f, 2.0f);
 		}
 		bool useSpecMap = mSettingData.useSpecMap > 0;
