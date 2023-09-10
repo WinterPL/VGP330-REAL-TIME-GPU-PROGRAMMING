@@ -155,6 +155,5 @@ float4 PS(VS_OUTPUT input) : SV_Target
             }
         }
     }
-    finalColor.a = 0.5;
 	return finalColor;
 }

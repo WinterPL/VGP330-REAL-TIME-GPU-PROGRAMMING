@@ -1,10 +1,7 @@
 #include "Precompiled.h"
 #include "TransparentEffect.h"
 
-
-#include "Camera.h";
-#include "GraphicsSystem.h"
-#include "RenderObject.h"
+#include "Camera.h"
 #include "RenderObject.h"
 #include "VertexTypes.h"
 #include "TextureManager.h"
@@ -13,7 +10,7 @@ using namespace WNTRengine;
 using namespace WNTRengine::WNTRmath;
 using namespace WNTRengine::Graphics;
 
-void Transparent::Initialize(const std::filesystem::path& filepath)
+void TransparentEffect::Initialize(const std::filesystem::path& filepath)
 {
 	mTransformBuffer.Initialize();
 	mLightingBuffer.Initialize();
@@ -23,41 +20,22 @@ void Transparent::Initialize(const std::filesystem::path& filepath)
 	mPixelShader.Initialize(filepath);
 	mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
 
-	auto gs = GraphicsSystem::Get();
-	const auto screenWidth = gs->GetBackBufferWidth();
-	const auto screenHeight = gs->GetBackBufferHeight();
-	mHorizontalBlurRenderTarget.Initialize(screenWidth, screenHeight, RenderTarget::Format::RGBA_U8);
-	mVerticalBlurRenderTarget.Initialize(screenWidth, screenHeight, RenderTarget::Format::RGBA_U8);
-
-	//std::filesystem::path shaderFile = "../../Assets/Shaders/Transparent.fx";
-	mHorizontalBlurPixelShader.Initialize(filepath, "HorizontalBlurPS");
-	mVerticalBlurPixelShader.Initialize(filepath, "VerticalBlurPS");
-
 	mBlendState.Initailize(BlendState::Mode::Transparent);
-
-	mSettingBuffer.Initialize();
-	mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
 }
 
-void Transparent::Terminate()
+void TransparentEffect::Terminate()
 {
+	mSampler.Terminate();
 	mPixelShader.Terminate();
 	mMaterialBuffer.Terminate();
 	mVertexShader.Terminate();
 	mTransformBuffer.Terminate();
-	mSampler.Terminate();
-	mSettingBuffer.Terminate();
-	mHorizontalBlurPixelShader.Terminate();
-	mVerticalBlurPixelShader.Terminate();
-	mHorizontalBlurRenderTarget.Terminate();
-	mVerticalBlurRenderTarget.Terminate();
 	mBlendState.Terminate();
 }
 
-void Transparent::Begin()
+void TransparentEffect::Begin()
 {
-
-	ASSERT(mCamera != nullptr, "StandardEffect: no camera set!");
+	ASSERT(mCamera != nullptr, "TransparentEffect: no camera set!");
 	mVertexShader.Bind();
 	mPixelShader.Bind();
 
@@ -71,37 +49,25 @@ void Transparent::Begin()
 	mSettingBuffer.BindVS(3);
 	mSettingBuffer.BindPS(3);
 
-	auto gs = GraphicsSystem::Get();
-	const auto screenWidth = gs->GetBackBufferWidth();
-	const auto screenHeight = gs->GetBackBufferHeight();
-
-	SettingData data;
-	data.screenWidth = static_cast<float>(screenWidth);
-	data.screenHeight = static_cast<float>(screenHeight);
-	data.multiplier = mBlurSaturation;
-	data.alphaPower = mAlphaPower;
-	mSettingBuffer.Update(data);
-	mSettingBuffer.BindPS(0);
-
 	mSampler.BindVS(0);
 	mSampler.BindPS(0);
 }
-void Transparent::End()
+void TransparentEffect::End()
 {
 	if (mShadowMap != nullptr)
 	{
 		Texture::UnbindPS(4);
 	}
-	auto gs = GraphicsSystem::Get();
-	gs->ResetRenderTarget();
-	gs->ResetViewport();
 }
 
-void Transparent::Render(const RenderObject& renderObject)
+void TransparentEffect::Render(const RenderObject& renderObject)
 {
+	mBlendState.set();
+
 	const auto& matWorld = renderObject.transform.GetMatrix4();
 	const auto& matView = mCamera->GetViewMatrix();
 	const auto& matProj = mCamera->GetProjectionMatrix();
+
 
 	SettingData settingData;
 	settingData.useDiffuseMap = mSettingData.useDiffuseMap > 0 && renderObject.diffuseMapId != 0;
@@ -113,6 +79,7 @@ void Transparent::Render(const RenderObject& renderObject)
 	settingData.useShadowMap = mSettingData.useShadowMap > 0 && mShadowMap != nullptr;
 	settingData.bumpWeight = mSettingData.bumpWeight;
 	settingData.depthBias = mSettingData.depthBias;
+	settingData.alphaPower = mSettingData.alphaPower;
 	mSettingBuffer.Update(mSettingData);
 
 	TransformData transformData;
@@ -139,59 +106,30 @@ void Transparent::Render(const RenderObject& renderObject)
 	tm->BindVS(renderObject.bumpMapId, 2);
 	tm->BindPS(renderObject.specMapId, 3);
 
-	renderObject.meshBuffer.Render();
 
-	auto gs = GraphicsSystem::Get();
-	mHorizontalBlurRenderTarget.BeginRender();
-	mSourceTexture->BindPS(0);
-	mHorizontalBlurPixelShader.Bind();
 	renderObject.meshBuffer.Render();
-	Texture::UnbindPS(5);
-	mHorizontalBlurRenderTarget.EndRender();
-
-	for (uint32_t i = 1; i < static_cast<int>(mBlurIterations); ++i)
-	{
-		mVerticalBlurRenderTarget.BeginRender();
-		mHorizontalBlurRenderTarget.BindPS(0);
-		mVerticalBlurPixelShader.Bind();
-		renderObject.meshBuffer.Render();
-		Texture::UnbindPS(5);
-		mVerticalBlurRenderTarget.EndRender();
-
-		mHorizontalBlurRenderTarget.BeginRender();
-		mVerticalBlurRenderTarget.BindPS(0);
-		mHorizontalBlurPixelShader.Bind();
-		renderObject.meshBuffer.Render();
-		Texture::UnbindPS(5);
-		mHorizontalBlurRenderTarget.EndRender();
-	}
-	mVerticalBlurRenderTarget.BeginRender();
-	mHorizontalBlurRenderTarget.BindPS(0);
-	mVerticalBlurPixelShader.Bind();
-	renderObject.meshBuffer.Render();
-	Texture::UnbindPS(5);
-	mVerticalBlurRenderTarget.EndRender();
+	BlendState::ClearState();
 }
 
-void Transparent::SetCamera(const Camera& camera)
+void TransparentEffect::SetCamera(const Camera& camera)
 {
 	mCamera = &camera;
 }
 
-void Transparent::SetLightCamera(const Camera& camera)
+void TransparentEffect::SetLightCamera(const Camera& camera)
 {
 	mLightCamera = &camera;
 }
 
-void Transparent::SetDirectionalLight(const DirectionalLight& directionalLight)
+void TransparentEffect::SetDirectionalLight(const DirectionalLight& directionalLight)
 {
 	mDirectionalLight = &directionalLight;
 }
-void Transparent::SetShadowMap(const Texture& shadowMap) {
+void TransparentEffect::SetShadowMap(const Texture& shadowMap) {
 	mShadowMap = &shadowMap;
 }
 
-void Transparent::DebugUI()
+void TransparentEffect::DebugUI()
 {
 	if (ImGui::CollapsingHeader("TransparentEffect##", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -230,13 +168,7 @@ void Transparent::DebugUI()
 			mSettingData.useShadowMap = (useShadowMap) ? 1 : 0;
 		}
 		ImGui::DragFloat("DepthBias##", &mSettingData.depthBias, 0.0000001f, 0.0f, 1.0f, "%.6f");
-		ImGui::DragInt("BlurIterations##", &mBlurIterations, 1, 1, 100);
-		ImGui::DragFloat("BlurSaturation##", &mBlurSaturation, 0.001f, 1.0f, 10.0f);
 		ImGui::DragFloat("Transparency##", &mSettingData.alphaPower, 0.001f, 0.01f, 1.0f);
-		ImGui::Text("Horizontal");
-		ImGui::Image(mHorizontalBlurRenderTarget.GetRawData(), { 144,144 });
-		ImGui::Text("Vertical");
-		ImGui::Image(mVerticalBlurRenderTarget.GetRawData(), { 144,144 });
 	}
 }
 

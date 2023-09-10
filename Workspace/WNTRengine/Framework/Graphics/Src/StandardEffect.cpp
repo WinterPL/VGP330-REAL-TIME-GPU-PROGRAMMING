@@ -1,5 +1,6 @@
 #include "Precompiled.h"
 #include "StandardEffect.h"
+
 #include "Camera.h"
 #include "RenderObject.h"
 #include "VertexTypes.h"

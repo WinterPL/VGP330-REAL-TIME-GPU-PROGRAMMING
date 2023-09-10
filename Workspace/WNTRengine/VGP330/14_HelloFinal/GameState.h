@@ -20,10 +20,10 @@ protected:
 	Camera mCamera;
 	DirectionalLight mDirectionalLight;
 
-	StandardEffect mStandardEffect;
-	Transparent mTransparentEffect;
+	TransparentEffect mTransparentEffect;
+	GaussianBlurEffect mGaussianEffect;
 	PostProcessingEffect mPostProcessingEffect;
-	
+
 	RenderObject mSunRenderObject;
 	RenderObject mEarthRenderObject;
 	RenderObject mScreenQuad;
@@ -31,12 +31,9 @@ protected:
 	RenderTarget mBaseRenderTarget;
 	RenderTarget mBloomRenderTarget;
 
-	BlendState mBlendState;
-
 	float mEarthOffset = 8.0f;
 	float mEarthRotation = 0.0f;
 	float mEarthRevolution = 0.0f;
-	float mAlphaPower = 1.0f;
 };
 
 

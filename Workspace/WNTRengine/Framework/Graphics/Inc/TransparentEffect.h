@@ -1,15 +1,12 @@
 #pragma once
-#pragma once
-
 
 #include "ConstantBuffer.h"
 #include "PixelShader.h"
 #include "Sampler.h"
-#include "RenderTarget.h"
 #include "VertexShader.h"
-#include "BlendState.h"
 #include "LightType.h"
 #include "Material.h"
+#include "BlendState.h"
 
 namespace WNTRengine::Graphics
 {
@@ -18,7 +15,7 @@ namespace WNTRengine::Graphics
 	class RenderObject;
 	class Texture;
 
-	class Transparent
+	class TransparentEffect final
 	{
 	public:
 		void Initialize(const std::filesystem::path& filepath);
@@ -29,23 +26,13 @@ namespace WNTRengine::Graphics
 
 		void Render(const RenderObject& renderObject);
 
-		void DebugUI();
-
-		void SetSourceTexture(const Texture& texture) { mSourceTexture = &texture; }
-
-		const Texture& GetHorizontalBlurTexture()const { return mHorizontalBlurRenderTarget; }
-		const Texture& GetVerticalBlurTexture()const { return mVerticalBlurRenderTarget; }
-		const Texture& GetResultTexture()const { return mVerticalBlurRenderTarget; }
 
 		void SetCamera(const Camera& camera);
 		void SetLightCamera(const Camera& camera);
 		void SetDirectionalLight(const DirectionalLight& directionalLight);
 		void SetShadowMap(const Texture& shadowMap);
-		void SetBlurIterations(int iterations) { mBlurIterations = iterations; }
-		void SetBlurSaturation(float saturation) { mBlurSaturation = saturation; }
-		void SetAlphaPower(float alphaPower) { mAlphaPower = alphaPower; }
 
-
+		void DebugUI();
 	private:
 		struct TransformData
 		{
@@ -55,6 +42,7 @@ namespace WNTRengine::Graphics
 			WNTRmath::Vector3 viewPosition;
 			float padding = 0;
 		};
+
 
 
 		struct SettingData
@@ -67,11 +55,8 @@ namespace WNTRengine::Graphics
 			int useShadowMap = 0;
 			float bumpWeight = 1.0f;
 			float depthBias = 0.000050f;
-
-			float screenWidth = 0;
-			float screenHeight = 0;
-			float multiplier = 0;
-			float alphaPower = 0;
+			float alphaPower = 0.5f;
+			float padding[3] = { 0 };
 		};
 		using TransformBuffer = TypedConstantBuffer<TransformData>;
 		using LightingBuffer = TypedConstantBuffer<DirectionalLight>;
@@ -82,28 +67,17 @@ namespace WNTRengine::Graphics
 		MaterialBuffer mMaterialBuffer;
 		SettingBuffer mSettingBuffer;
 
-		RenderTarget mHorizontalBlurRenderTarget;
-		RenderTarget mVerticalBlurRenderTarget;
-
 		VertexShader mVertexShader;
 		PixelShader mPixelShader;
-		PixelShader mHorizontalBlurPixelShader;
-		PixelShader	mVerticalBlurPixelShader;
-
 		Sampler mSampler;
 
 		BlendState mBlendState;
 
 		SettingData mSettingData;
-		const Texture* mSourceTexture = nullptr;
 		const Camera* mCamera = nullptr;
 		const Camera* mLightCamera = nullptr;
 		const DirectionalLight* mDirectionalLight = nullptr;
 		const Texture* mShadowMap = nullptr;
-
-		int mBlurIterations = 1;
-		float mBlurSaturation = 1.0f;
-		float mAlphaPower = 0.5f;
 	};
 }
 

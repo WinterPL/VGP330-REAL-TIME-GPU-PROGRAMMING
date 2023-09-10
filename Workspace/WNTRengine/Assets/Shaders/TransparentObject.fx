@@ -3,8 +3,8 @@
 cbuffer TransformBuffer : register(b0)
 {
     matrix world;
-	matrix wvp;
-	matrix lwvp;
+    matrix wvp;
+    matrix lwvp;
     float3 viewPosition;
 }
 
@@ -35,10 +35,6 @@ cbuffer SettingBuffer : register(b3)
     bool useShadowMap;
     float bumpWeight;
     float depthBias;
-    
-    float screenWidth;
-    float screenHeight;
-    float multiplier;
     float alphaPower;
 }
 
@@ -48,55 +44,53 @@ Texture2D normalMap : register(t1);
 Texture2D bumpMap : register(t2);
 Texture2D specMap : register(t3);
 Texture2D shadowMap : register(t4);
-Texture2D textureMap : register(t5);
 
 SamplerState textureSampler : register(s0);
 
 struct VS_INPUT
 {
-	float3 position : POSITION;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-	float2 texCoord : TEXCOORD;
+    float3 position : POSITION;
+    float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float2 texCoord : TEXCOORD;
 };
 
 struct VS_OUTPUT
 {
-	float4 position : SV_Position;
+    float4 position : SV_Position;
     float3 worldNormal : NORMAL;
     float3 worldTangent : TANGENT;
     float3 dirToLight : TEXCOORD0;
     float3 dirToView : TEXCOORD1;
-	float2 texCoord : TEXCOORD2;
+    float2 texCoord : TEXCOORD2;
     float4 lightNDCPosition : TEXCOORD3;
 };
 
-static const float gaussianWeights[5] = { 0.227027f, 0.1945946f, 0.1216216f, 0.054054f, 0.016216f };
-
 VS_OUTPUT VS(VS_INPUT input)
 {
-	VS_OUTPUT output;
+    VS_OUTPUT output;
 	
     matrix toWorld = world;
     matrix toNDC = wvp;
     float3 localPosition = input.position;
-    if(useBumpMap){
+    if (useBumpMap)
+    {
         float bumpColor = (2.0f * bumpMap.SampleLevel(textureSampler, input.texCoord, 0.0f).r) - 1.0f;
-        localPosition += (input.normal * bumpColor*bumpWeight);
+        localPosition += (input.normal * bumpColor * bumpWeight);
     }
 
-	output.position = mul(float4(localPosition, 1.0f), toNDC);
+    output.position = mul(float4(localPosition, 1.0f), toNDC);
     output.worldNormal = mul(input.normal, (float3x3) toWorld);
     output.worldTangent = mul(input.tangent, (float3x3) toWorld);
     output.dirToLight = -lightDirection;
     output.dirToView = normalize(viewPosition - mul(float4(localPosition, 1.0f), toWorld).xyz);
-	output.texCoord = input.texCoord;
+    output.texCoord = input.texCoord;
     if (useShadowMap)
     {
         output.lightNDCPosition = mul(float4(localPosition, 1.0f), lwvp);
     }
 
-	return output;
+    return output;
 }
 
 float4 PS(VS_OUTPUT input) : SV_Target
@@ -118,10 +112,10 @@ float4 PS(VS_OUTPUT input) : SV_Target
         
     
     //ambient color
-    float4 ambient = lightAmbient*materialAmbient;
+    float4 ambient = lightAmbient * materialAmbient;
     //diffuse color
     float d = saturate(dot(light, n));
-    float dIntensity = (useCelShading)? smoothstep(0.005f,0.01f,d) : d;
+    float dIntensity = (useCelShading) ? smoothstep(0.005f, 0.01f, d) : d;
     float4 diffuse = dIntensity * lightDiffuse * materialDiffuse;
     //specular
     float3 r = reflect(-light, n);
@@ -132,20 +126,21 @@ float4 PS(VS_OUTPUT input) : SV_Target
 
     //emissive color
     float4 emissive = materialEmissive;
-    if (useCelShading) {
-    float edgeThinckness = 0.85f;
-    float edgeThreshold = 0.01f;
-    float e = 1.0f - saturate(dot(view, n));
-    float eIntensity = e * pow(d, edgeThreshold);
-    eIntensity = smoothstep(edgeThinckness - 0.01f, edgeThinckness + 0.01f, eIntensity);
-    emissive = eIntensity * materialEmissive;
+    if (useCelShading)
+    {
+        float edgeThinckness = 0.85f;
+        float edgeThreshold = 0.01f;
+        float e = 1.0f - saturate(dot(view, n));
+        float eIntensity = e * pow(d, edgeThreshold);
+        eIntensity = smoothstep(edgeThinckness - 0.01f, edgeThinckness + 0.01f, eIntensity);
+        emissive = eIntensity * materialEmissive;
     }
 
     //get color from texture
-    float4 diffuseMapColor = (useDiffuseMap)?diffuseMap.Sample(textureSampler, input.texCoord):1.0f;
+    float4 diffuseMapColor = (useDiffuseMap) ? diffuseMap.Sample(textureSampler, input.texCoord) : 1.0f;
     float4 specMapColor = (useSpecMap) ? specMap.Sample(textureSampler, input.texCoord).r : 1.0f;
     //combine colors for final result
-    float4 finalColor = (ambient + diffuse + emissive) * diffuseMapColor + (specular*specMapColor);
+    float4 finalColor = (ambient + diffuse + emissive) * diffuseMapColor + (specular * specMapColor);
     
     if (useShadowMap)
     {
@@ -157,36 +152,12 @@ float4 PS(VS_OUTPUT input) : SV_Target
         {
             float4 savedColor = shadowMap.Sample(textureSampler, float2(u, v));
             float savedDepth = savedColor.r;
-            if (savedDepth > actualDepth + depthBias) 
+            if (savedDepth > actualDepth + depthBias)
             {
                 finalColor = (ambient + materialEmissive) * diffuseMapColor;
             }
         }
     }
-   finalColor.a = alphaPower;
-	return finalColor;
-}
-
-float4 HorizontalBlurPS(VS_OUTPUT input) : SV_Target
-{
-    float2 offset = float2(2.0f / screenWidth, 0.0f);
-    float4 finalColor = textureMap.Sample(textureSampler, input.texCoord) * gaussianWeights[0];
-    for (int i = 1; i < 5; ++i)
-    {
-        finalColor += textureMap.Sample(textureSampler, input.texCoord + (offset * i)) * gaussianWeights[i];
-        finalColor += textureMap.Sample(textureSampler, input.texCoord - (offset * i)) * gaussianWeights[i];
-    }
-    return finalColor * multiplier;
-}
-
-float4 VerticalBlurPS(VS_OUTPUT input) : SV_Target
-{
-    float2 offset = float2(0.0f, 2.0f / screenHeight);
-    float4 finalColor = textureMap.Sample(textureSampler, input.texCoord) * gaussianWeights[0];
-    for (int i = 1; i < 5; ++i)
-    {
-        finalColor += textureMap.Sample(textureSampler, input.texCoord + (offset * i)) * gaussianWeights[i];
-        finalColor += textureMap.Sample(textureSampler, input.texCoord - (offset * i)) * gaussianWeights[i];
-    }
-    return finalColor * multiplier;
+    finalColor.a = alphaPower;
+    return finalColor;
 }

@@ -44,7 +44,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shader", "Shader", "{8ED6EE
 		Assets\Shaders\Shadow.fx = Assets\Shaders\Shadow.fx
 		Assets\Shaders\Standard.fx = Assets\Shaders\Standard.fx
 		Assets\Shaders\Terrain.fx = Assets\Shaders\Terrain.fx
-		Assets\Shaders\Transparent.fx = Assets\Shaders\Transparent.fx
 		Assets\Shaders\TransparentObject.fx = Assets\Shaders\TransparentObject.fx
 	EndProjectSection
 EndProject
