@@ -22,6 +22,7 @@ protected:
 	DirectionalLight mDirectionalLight;
 
 	TransparentEffectUpgrade mTransparentEffect;
+	StandardEffect mStandardEffect;
 	//TransparentEffect mTransparentEffect;
 	GaussianBlurEffect mGaussianEffect;
 	PostProcessingEffect mPostProcessingEffect;

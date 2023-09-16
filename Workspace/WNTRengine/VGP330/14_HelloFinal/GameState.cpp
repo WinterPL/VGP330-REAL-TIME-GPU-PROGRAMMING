@@ -19,6 +19,12 @@ void GameState::Initialize()
     mTransparentEffect.Initialize(shaderFile);
     mTransparentEffect.SetCamera(mCamera);
     mTransparentEffect.SetDirectionalLight(mDirectionalLight);
+    std::filesystem::path shaderFile1 = L"../../Assets/Shaders/Standard.fx";
+    mStandardEffect.Initialize(shaderFile1);
+    mStandardEffect.SetCamera(mCamera);
+    mStandardEffect.SetDirectionalLight(mDirectionalLight);
+
+
 
     mGaussianEffect.Initialize();
     mGaussianEffect.SetBlurIterations(10);
@@ -69,38 +75,41 @@ void GameState::Terminate()
     mPostProcessingEffect.Terminate();
     mGaussianEffect.Terminate();
     mTransparentEffect.Terminate();
+    mStandardEffect.Terminate();
 }
 
 void GameState::Render()
 {
     mBaseRenderTarget.BeginRender();
-     mTransparentEffect.Begin();
-         mTransparentEffect.Render(mSunRenderObject);
-         mTransparentEffect.Render(mEarthRenderObject);
-     mTransparentEffect.End();
-
-    SimpleDraw::AddGroundPlane(20.0f, Colors::White);
-    SimpleDraw::Render(mCamera);
+        SimpleDraw::AddGroundPlane(20.0f, Colors::White);
+        SimpleDraw::Render(mCamera);
+        mStandardEffect.Begin();
+            //mStandardEffect.Render(mSunRenderObject);
+            //mStandardEffect.Render(mEarthRenderObject);
+        mStandardEffect.End();
+         mTransparentEffect.Begin();
+             mTransparentEffect.Render(mSunRenderObject);
+             mTransparentEffect.Render(mEarthRenderObject);
+         mTransparentEffect.End();
     mBaseRenderTarget.EndRender();
 
-
     mBloomRenderTarget.BeginRender();
-    Material dummyMaterial;
-    dummyMaterial.power = 1.0f;
-    std::swap(mEarthRenderObject.material, dummyMaterial);
-     mTransparentEffect.Begin();
-     //mTransparentEffect.Render(mSunRenderObject);
-     mTransparentEffect.Render(mEarthRenderObject);
-     mTransparentEffect.End();
-    std::swap(mEarthRenderObject.material, dummyMaterial);
+        Material dummyMaterial;
+        dummyMaterial.power = 1.0f;
+        std::swap(mEarthRenderObject.material, dummyMaterial);
+             mTransparentEffect.Begin();
+             //mTransparentEffect.Render(mSunRenderObject);
+                 mTransparentEffect.Render(mEarthRenderObject);
+                 mTransparentEffect.End();
+            std::swap(mEarthRenderObject.material, dummyMaterial);
     mBloomRenderTarget.EndRender();
 
     mGaussianEffect.Begin();
-    mGaussianEffect.Render(mScreenQuad);
+        mGaussianEffect.Render(mScreenQuad);
     mGaussianEffect.End();
 
     mPostProcessingEffect.Begin();
-    mPostProcessingEffect.Render(mScreenQuad);
+        mPostProcessingEffect.Render(mScreenQuad);
     mPostProcessingEffect.End();
 
 }
